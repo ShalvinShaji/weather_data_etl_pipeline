@@ -1,6 +1,6 @@
 # Weather ETL Pipeline
 
-![Weather ETL Diagram](diagrams/weather_etl.png)
+<!-- ![Weather ETL Diagram](diagrams/weather_etl.png) -->
 
 ## Project Overview
 This project is a **serverless ETL pipeline** that ingests, processes, and stores weather data for analytics. The architecture is layered and uses AWS managed services for scalability and reliability.
