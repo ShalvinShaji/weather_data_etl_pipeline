@@ -4,6 +4,17 @@ data "archive_file" "lambda_zip" {
   output_path = "${path.module}/src/lambda.zip"
 }
 
+resource "aws_secretsmanager_secret" "weather_api_key" {
+  name = "weather_api_key_sha283"
+}
+
+resource "aws_secretsmanager_secret_version" "weather_api_key" {
+  secret_id = aws_secretsmanager_secret.weather_api_key.id
+  secret_string = jsonencode({
+    access_key = "YOUR_ACTUAL_API_KEY_HERE"
+  })
+}
+
 resource "aws_lambda_function" "weather_api_fetcher_lambda" {
   filename      = data.archive_file.lambda_zip.output_path
   function_name = "weather_api_fetcher_lambda"
@@ -55,14 +66,5 @@ resource "aws_lambda_layer_version" "weather_api_fetcher_lambda_layer" {
 
 
 
-resource "aws_secretsmanager_secret" "weather_api_key" {
-  name = "weather_api_key"
-}
 
-resource "aws_secretsmanager_secret_version" "weather_api_key" {
-  secret_id = aws_secretsmanager_secret.weather_api_key.id
-  secret_string = jsonencode({
-    access_key = "YOUR_ACTUAL_API_KEY_HERE"
-  })
-}
 
