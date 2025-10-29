@@ -5,13 +5,14 @@ data "archive_file" "lambda_zip" {
 }
 
 resource "aws_secretsmanager_secret" "weather_api_key" {
-  name = "weather_api_key_sha283"
+  name = "weather_api_key_sha2838"
 }
 
 resource "aws_secretsmanager_secret_version" "weather_api_key" {
   secret_id = aws_secretsmanager_secret.weather_api_key.id
   secret_string = jsonencode({
     access_key = "YOUR_ACTUAL_API_KEY_HERE"
+    api_url = "YOUR_ACTUAL_API_URL_HERE"
   })
 }
 
@@ -33,23 +34,21 @@ resource "aws_lambda_function" "weather_api_fetcher_lambda" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "five_minute_api_fetch_lambda" {
-  name                = "every-five-minutes"
-  schedule_expression = "rate(5 minutes)"
-}
-
-resource "aws_cloudwatch_event_target" "trigger_api_fetch_lambda" {
-  rule = aws_cloudwatch_event_rule.five_minute_api_fetch_lambda.name
-  arn  = aws_lambda_function.weather_api_fetcher_lambda.arn
-}
-
-resource "aws_lambda_permission" "allow_eventbridge" {
-  statement_id  = "AllowExecutionFromEventBridge"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.weather_api_fetcher_lambda.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.five_minute_api_fetch_lambda.arn
-}
+ #resource "aws_cloudwatch_event_rule" "one_minute_api_fetch_lambda" {
+ # name                = "every-one-minute"
+ # schedule_expression = "rate(1 minute)"
+ #}
+ #resource "aws_cloudwatch_event_target" "trigger_api_fetch_lambda" {
+ # rule = aws_cloudwatch_event_rule.one_minute_api_fetch_lambda.name
+ # arn  = aws_lambda_function.weather_api_fetcher_lambda.arn
+ #}
+ #resource "aws_lambda_permission" "allow_eventbridge" {
+ # statement_id  = "AllowExecutionFromEventBridge"
+ # action        = "lambda:InvokeFunction"
+ # function_name = aws_lambda_function.weather_api_fetcher_lambda.function_name
+ # principal     = "events.amazonaws.com"
+ # source_arn    = aws_cloudwatch_event_rule.one_minute_api_fetch_lambda.arn
+ #}
 
 data "archive_file" "weather_api_fetcher_lambda_layer" {
   type        = "zip"

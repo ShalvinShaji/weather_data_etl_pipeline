@@ -1,12 +1,12 @@
+import os
 import json
 import config
-from datetime import datetime
 import requests
-import os
 import boto3
+from datetime import datetime
 
 SECRET_ARN = os.environ['SECRET_ARN']
-S3_BUCKET = "weather-data-bucket-prod"  # Your bucket name
+S3_BUCKET = "weather-data-bucket-sha283"
 
 def lambda_handler(event, context):
     try:
@@ -30,7 +30,7 @@ def lambda_handler(event, context):
             hour = current_time.strftime("%H")
             minute = current_time.strftime("%M")
             
-            s3_key = f"raw/{year}/{month}/{day}/{hour}/{city}_{minute}.json"
+            s3_key = f"raw/hour-{hour}/minute-{minute}/{city}.json"
             
             # Upload to S3
             s3_client.put_object(
